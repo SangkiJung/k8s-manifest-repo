@@ -1,0 +1,29 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-nodejs-backend
+  namespace: default
+  labels:
+    tags.datadoghq.com/env: "eks-demo2"
+    tags.datadoghq.com/service: "demo-express"
+    tags.datadoghq.com/version: "1.1"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: demo-nodejs-backend
+  template:
+    metadata:
+      labels:
+        app: demo-nodejs-backend
+        tags.datadoghq.com/env: "eks-demo2"
+        tags.datadoghq.com/service: "demo-express"
+        tags.datadoghq.com/version: "1.1"
+    spec:
+      containers:
+        - name: demo-nodejs-backend
+          image: public.ecr.aws/y7c9e1d2/joozero-repo:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000

@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-flask-backend
+  namespace: default
+  labels:
+    tags.datadoghq.com/env: "eks-demo2"
+    tags.datadoghq.com/service: "demo-flask"
+    tags.datadoghq.com/version: "1.1"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: demo-flask-backend
+  template:
+    metadata:
+      labels:
+        app: demo-flask-backend
+        tags.datadoghq.com/env: "eks-demo2"
+        tags.datadoghq.com/service: "demo-flask"
+        tags.datadoghq.com/version: "1.1"
+    spec:
+      containers:
+        - name: demo-flask-backend
+          image: 065199070014.dkr.ecr.ap-northeast-2.amazonaws.com/demo-flask-backend:latest
+          env:
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DD_ENV
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/env']
+            - name: DD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/service']
+            - name: DD_VERSION
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/version']
+        
+            - name: DD_PROFILING_ENABLED
+              value: "true"
+            - name: DD_LOGS_INJECTION
+              value: "true"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
