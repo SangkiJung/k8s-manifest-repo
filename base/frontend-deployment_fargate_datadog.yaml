@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-frontend
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend-fargate
+  template:
+    metadata:
+      labels:
+        app: frontend-fargate
+    spec:
+      serviceAccountName: datadog-agent
+      shareProcessNamespace: true
+      containers:
+        - name: demo-frontend
+          image: 065199070014.dkr.ecr.ap-northeast-2.amazonaws.com/demo-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+        - image: datadog/agent
+          name: datadog-agent
+          env:
+          - name: DD_API_KEY
+            value: "b46675cd3f69d64c0c2dcce3a0b526c3"
+          - name: DD_SITE
+            value: "datadoghq.com"
+          - name: DD_EKS_FARGATE
+            value: "true"
+          - name: DD_CLUSTER_NAME
+            value: "eks-demo"
+          - name: DD_CLUSTER_AGENT_ENABLED
+            value: "true"
+          - name: DD_CLUSTER_AGENT_URL
+            value: https://datadog-cluster-agent-cluster-agent.default.svc.cluster.local:5005
+          - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+            value: krq1LHzBNzDzrlrWMIJBg3BCKun9hYZP
+          - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
+            value: "true"
+          - name: DD_KUBERNETES_KUBELET_NODENAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: spec.nodeName
+          resources:
+              requests:
+                memory: "256Mi"
+                cpu: "200m"
+              limits:
+                memory: "256Mi"
+                cpu: "200m"   

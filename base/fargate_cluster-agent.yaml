@@ -1,0 +1,12 @@
+
+datadog:
+  apiKey: b46675cd3f69d64c0c2dcce3a0b526c3
+  clusterName: eks-demo
+agents:
+  enabled: false
+clusterAgent:
+  enabled: true
+  replicas: 2
+  env:
+    - name: DD_EKS_FARGATE
+      value: "true"

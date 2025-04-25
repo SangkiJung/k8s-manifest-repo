@@ -1,0 +1,13 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  site: datadoghq.com
+  tags:
+    - env:staging
+  apm:
+    socketEnabled: true
+    portEnabled: true
+  logs:
+    enabled: true
+    containerCollectAll: true
+  admissionController:
+    enabled: true
